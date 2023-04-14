@@ -1,0 +1,44 @@
+테라폼은 aws, azure, gdp등 클라우드 인프라 설정을 코드로 관리할 수 있도록 도와주는 도구이다.
+
+https://developer.hashicorp.com/terraform/downloads -> 설치
+
+- 테라폼 코드는 go 코드와 분리
+
+1. 테라폼 폴더와 3개의 파일 생성
+$ mkdir terraform && cd $_
+$ touch data.tf providers.tf terraform.tf
+
+2. 테라폼을 초기화하기 전에 테라폼의 상태파일 terraform.fstate 를 저장하기 위해 s3 버킷 추가
+이 버킷에 람다에 올라갈 바이너리도 저장될 것이다. 적당한 이름의 버킷을 aws-cli 만들어주자 -> go_note_api
+$ aws s3 mb s3://go-note-api -> 오류는 버킷 이름은 본인 계정이 안인 모든 계정. 기준으로 생각해야함 다른 이름 ㄱ ㄱ
+aws s3 mb s3://go-note-api-oppp0999-1 --region ap-northeast-2
+us-west-1 -> US EAST(Virginia) 지여깅다
+한국은 -> ap-northeast-2
+
+----
+버킷 조회
+$ aws s3 ls
+----
+
+설치가 안되어 있다면 
+-$ brew install awscli
+-$ aws configure
+
+
+3. 테라폼을 초기화해주기 위한 코드를 작성 //terraform.tf, data, providers 작성
+버켓은 프로젝트 이름고 ㅏ동일하게
+
+4. 모든 코드 저장후에 테라폼을 초기화
+$ terraform init
+$ terraform refresh
+
+
+
+
+
+------note
+- 프로젝트 구조는 go-note-api/tree/v0.2.0 에서 확인할 수 있다.
+- aws cli가 설치되어있어야 하며 aws confing 커맨드로 프로필을 설정해주어야 한다.
+- 테라폼은 DynamoDB로 상태변경 잠금을 걸어주는 것이 좋다. State Lock with DynamoDB를 보면 된다.
+- Data.tf의 output은 불필요한 코드이지만, 제대로 테라폼이 초기화되었는지 확인하기 위해 넣어주었다.
+------

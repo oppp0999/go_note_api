@@ -1,0 +1,23 @@
+터미널을 열고 폴더 만든 후 go 초기화
+
+1. mkdir go_note_api
+1.1 go mod init github.com/your-git-account/go_note_api -> 프로젝트 확장 후 서비스를 만들기 위한 git URL
+
+2. 스크립트 재사용을 위한 Makefile과 프로그램 시작점이 될 main.go를 생성
+
+
+실행, 컴파일
+$ go run .
+go-note-api
+
+$ make build
+$ ./main
+go-note-api
+
+
+-----note-----
+Makefile -> 들여쓰기에 tab 사용
+GOPATH가 가르키는 폴더 내부는 go module을 사용할 수 없다 -> GOPATH 바깥에 프로젝트 만들자
+본인의 도메인에 API를 연결하고 싶으면 미리미리 인증서를 받아두자. 인증서를 발급받는데 시간이 좀 걸리는 편이다. -> 방법은 A1에서
+--------------
+

@@ -1,0 +1,18 @@
+1. 프로젝트세팅
+2. terraform 세팅
+3. hello world 람다
+4. echo와 api gateway
+5. put item
+6. custom domain and deployment
+7. read, update, delete
+A1. ACM certificate 생성
+
+-------
+GO로 간단한 api 서비스 만들기
+1. aws lambda에 서비스를 올린 뒤 api-gateway에 커스텀 도메인 https를 적용해 요청 처리
+2. 손쉽게 배포하기 위해 aws웹 콘솔로 직접 인프라를 구성하지 않고 terrafrom 사용
+간단한 노트 서비스 백엔드 -> 제목과 내용을 ටㅏ진 문서에 대한 crud 및 리스트 기능을 제공 -> 사용자 인증은 아직 다루지 않을것
+
+note -> 이 글은 마이크로서비스 아키텍처 설계에 관힌 글이 아니다.
+-> aws-lambda를 사용하고 DynamoDB로 데이터를 관리하지만 API 엔드포인트마다 람다 핸들러를 분리하지 않는다.
+대신 aws-lambda-go-api-proxy 라이브러리 사용하여 stand-alone서버를 올림 이는 마이크로서비스 X

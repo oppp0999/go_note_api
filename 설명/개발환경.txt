@@ -1,0 +1,9 @@
+- go 개발 환경 (ver 1.13 이상)
+
+- AWS 계정, git 계정
+
+- Route53에 등록된 도메인
+
+- Terrafrom(ver 0.12.x 이상) , aws-cli
+
+- 터미널 환경 (zsh)
