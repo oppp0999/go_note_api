@@ -4,3 +4,36 @@ echo -> go 웹 프레임워크 (가볍고 강력한 기능들이 있음)
 -> /note 로 요청을 보내면 200status로 돌려주는 코드이다. 확장성을 위해 /note를 기본 패스
 
 
+
+2. main을 수정한다 -> APP_ENV 환경 변수가 production 일 때 람다 핸들러가 실행되고 그렇지 않은 경우 로컬에서 일반 서버처럼
+3201포트로 요청을 수신한다.
+$ go run . 커맨드로 서버를 실행
+
+
+3. 커맨드로 서버를 만든 후에 curl로 요청을 보내 확인해보자
+curl -I -X GET http://localhost:3201/note
+
+4. 이제 make build-linux && make deploy 커맨드로 코드를 배포한 뒤 람다에 HTTP요청을 보낼 수 있는 API gateway를 만들 것 -> api-gateway-api.tf , api-gateway-method.tf
+
+= go-note-api 라는 이름의 api-gateway를 만들고 그 아래 note라는 이름의 리소스(패스) 와 그 아래 요청을 프록시해주는 코드
+그리고 api-gateway로 들어오는 요청은 go-note-api 람다로 보내진다
+
+마지막으로 lambda.tf 에 api-gateway 람다로 요청을 보낼 수 있는 권한을 부여하는 코드를 추가한 뒤 terraform apply 커맨드로 변경사항을 적용 (Lambda.tf -> 46-52)
+
+
+5. 브라우저를 열고 AWS console에 로그인 한 뒤 API Gateway > go-note-api > 리소스 > ANY-메서드 > 테스트 > GET 요청
+#200코드로 응답한다면 성공
+
+-> 쿼리에
+parma1=value1&param2=value2
+
+응답 본문
+{"statusCode":200,"body":"Hello from Lambda!"}
+
+성공한 것이다.
+
+
+------note
+Echo -> 최신 버전은 v4이다.
+그래서 전반적으로 echo API는 v4와 호환되기 때문에 버전을 맞춰서 올려주면 된다.
+----------
