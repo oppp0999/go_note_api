@@ -1,1 +1,23 @@
 의미없는 앱을 -> note CRUD서비스로 만들어보자.(대부분의 컴퓨터 소프트웨어가 가지는 기본적인 데이터 처리 기능인 Create(생성), Read(읽기), Update(갱신), Delete(삭제)를 묶어서 일컫는 말이다.)
+
+note -> title, content 가지고있는 레코드, 유저와 아이디가 복합 키를 구성
+데이터 -> DynamoDB(서버리스이기에 aws lambda와 좋다고 판단, 요청한 만큼 지불)
+
+
+1. dynamodb.tf -> terraform apply 작성 후 적용
+
+
+2. table.go -> 실제 레코드의 구조와 무관하게 dynamodb putitem 요청을 보낼 수 있는 코드이다. (dynamodb세션은 다른 코드에서 초기화 해줄 것이다.)
+
+3. note.go -> note구조체와 상호작용할 수 있는 코드, dynamodb는 rangeKey(note.Id)로 레코드 정렬하므로 millisecond정확도의 유닉스 타임으로 id를 만들어준다. -> 1ms 내에 복수개의 요청이 들어오면 오작동
+
+4. server.go -> 19~32 -> post요청을 보낼 수 있는 라우터를 추가.
+
+5. go run . -> curl -X POST -H "Content-Type: application/json" -d \
+		'{ "title": "untitled", "content": "cat is awesome" }' \
+  		http://localhost:3201/note/user1
+
+테스트 커맨드를 보내고 Id와 timestamp를 포함한 응답이 올것이다. dynamoDB console을 열어 항목이 제대로 추가됐는지 확인
+
+
+6. lambda.tf -> 54~85 -> 람다에 dynamo권한을 주는 것이다. 그리고 테라폼 apply로 적용하기 -> 최소 권한을 부여하지만 여기선 확장가능한 범위 내에서 충분히 안전한 권한을 부여

@@ -1,0 +1,3 @@
+AWS 웹 콘솔의 Certificate Manager 서비스로 이동한 다음 새 인증서를 요청하자. 이 때 AWS의 리전은 API-gateway region과 동일해야 한다. 이 튜토리얼은 ap-northeast-2(서울) 리전에서 진행하였다. 도메인이름에 루트 도메인이름(overthecode.io)과 모든 서브도메인(*.overthecode.io)를 추가하면 된다.
+
+DNS검증 방식으로 도메인 소유권을 검증할 수 있는데, 웹 콘솔에서 Route53에 검증 레코드를 추가하는 버튼을 누를 수 있을 것이다. 레코드가 추가된 뒤 약 30분 이내에 인증서가 발급된다
