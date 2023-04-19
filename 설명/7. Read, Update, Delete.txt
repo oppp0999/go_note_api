@@ -1,0 +1,53 @@
+CRUD에서 create밖에 하지 못하기에 나머지 RUD를 완성 -> List(getAll), Read(getOne) -> 한가지 레코드만 읽어 오는 것은 당장 필요한 요소가 아니다.
+DynamoDB -> 파티션과 레인지 복합 키로 작동하는 DBMS이며 Query 요청에 최대 1MB의 데이터를 읽어올 수 있다.
+
+"즉, 데이터 양이 많아지면 한 번에 모든 레코드를 가져올 수 없기 때문에 페이지네이션을 해야하고 이에 관한 코드도 함께 보자."
+
+1. table.go 를 열어 ListItem 함수를 추가 ->
+해쉬(파티션) 키 이름과 값을 받고 페이지네이션 여부, 쿼리 시작 지점의 레인지(소트) 키를 받을 수 있도록 추상화되어있다. 이 함수는 복합키를 가진 임의의 테이블에서 잘 작동할 것이다.
+
+2. note.go -> noteQueryResult 구조체와 getNotes 함수를 추가 ->
+
+3. server.go -> createServer 함수 아래에 라우트를 추가해주면 완성 -> 
+
+4. 로컬 테스트 -> make build-linux && make deploy 로 서버에 올려보자. -> user1에 대한 노트 리스트가 JSON포맷으로 출력됨
+$ curl -X GET https://api.overthecode.io/note/user1
+
+5. 출력된 JSON에 lastEvaluatedkey가 있는데 값이 비어있을 것이다. 그리고 scannedCount 값이 우리가 limit으로 설정한 5보다 작은데 이는 레코드 숫자가 적어 한번에 모든 레코드를 가져왔다는 의미
+- count값은 filterExpression 이 적용된 이후의 레코드 숫자이기 때문에 여기서는 의미가 없다
+- 페이지네이션 테스트를 위해 몇 개 더 레코드를 추가한 다음에 테스트해보자
+- 레코드가 최소한 여섯개 이상이 되어야 한다.
+
+$ curl -X POST -H "Content-Type: application/json" -d \
+  '{ "title": "hello2", "content": "world2" }' \
+  https://api.overthecode.io/note/user1
+$ curl -X POST -H "Content-Type: application/json" -d \
+  '{ "title": "hello3", "content": "world3" }' \
+  https://api.overthecode.io/note/user1
+
+다시 GET 요청을 보내 레코드를 받아오면 이번엔 lastEvaluatedKey 에 값이 들어가 있는 것을 확인할 수 있다.
+lastEvaluatedKey.id 값을 GET요청의 from 쿼리 파라미터에 추가해주면 해당 id 이후 부터 레코드를 탐색한다. 
+
+$ $ curl -X GET https://api.overthecode.io/note/user1\?from\=1590012352455034
+
+---------
+
+6. 마지막으로 Update와 Delete -> table.go, note.go, server.go 각각 추가
+table.go ->
+note.go ->
+server.go ->
+
+로컬에서 테스트해도 괜찮고 배포한 다음 테스트를 할 수도 있다.
+# 노트를 수정한다.
+$ curl -X PUT -H "Content-Type: application/json" -d \
+  '{ "title": "this is", "content": "updated" }' \
+  http://localhost:3201/note/user1/1590012463321602
+
+# 노트를 삭제한다.
+$ curl -X DELETE https://api.overthecode.io/note/user1/1590012463321602
+
+추가로 CORS가 잘 적용되었는지 확인하기 위해 브라우저의 개발자 도구를 열고 자바스크립트의 fetch API로 요청을 보내자 -> 사실 CORS 헤더가 잘 붙어있기 때문에 큰 의미가 없다
+
+fetch('https://api.overthecode.io/note/user1')
+  .then(response => response.json())
+  .then(data => console.log(data));
