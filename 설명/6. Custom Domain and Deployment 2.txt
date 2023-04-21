@@ -17,6 +17,15 @@ $ make build-linux && make deploy
 테스트
 $ curl -X POST -H "Content-Type: application/json" -d \
   '{ "title": "hello", "content": "world!" }' \
-  https://api.overthecode.io/note/user1
+  https://api.abovemyhead.cf/note/user1
 
 -> 응답이 제대로 온다면 dynamoDB콘솔에서 새로운레코드가 생긴 것을 확인할 수 있다.
+
+
+
+
+---
+
+curl -X POST -H "Content-Type: application/json" -d \
+  '{ "title": "untitled", "content": "cat is awesome" }' \
+  http://localhost:3201/note/user1
